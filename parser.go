@@ -1,10 +1,11 @@
 package parser
 
 import (
+	"fmt"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
-	"fmt"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -18,7 +19,42 @@ type Page struct {
 // done only once when package loads
 var re = regexp.MustCompile(`\s+`)
 
+func normalise(raw string) (string, error) {
+	u, err := url.Parse(raw)
+	if err != nil {
+		return "", err
+	}
+
+	// normalise scheme
+	if u.Scheme == "" {
+		u.Scheme = "https"
+	}
+
+	// remove fragment
+	u.Fragment = ""
+
+	// clean query
+	u.RawQuery = ""
+
+	// normalise host
+	u.Host = strings.ToLower(u.Host)
+
+	// normalise path
+	if u.Path == "" {
+		u.Path = "/"
+	}
+
+	return u.String(), nil
+}
+
 func Parse(url string) (Page, string, error) {
+
+	// normalise url
+	url, err := normalise(url)
+	if err != nil {
+		return Page{}, "", err
+	}
+
 	res, err := http.Get(url)
 	if err != nil {
 		return Page{}, "", err
