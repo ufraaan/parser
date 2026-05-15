@@ -117,3 +117,18 @@ func Parse(rawUrl string) (Page, string, error) {
 
 	return page, body, nil
 }
+
+func Tokenise(text string) ([]string, error) {
+	text = strings.ToLower(text)
+	
+	words := regexp.MustCompile(`[^\w]+`).Split(text, -1)
+	
+	var tokens []string
+	for _, w := range words {
+		if len(w) > 2 {
+			tokens = append(tokens, w)
+		}
+	}
+	
+	return tokens, nil
+}

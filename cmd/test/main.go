@@ -2,16 +2,17 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/ufraaan/parser"
 )
 
 func main() {
-	page, body, err := parser.Parse("https://ufraan.dev")
+	text := "Hello, world!! Go_lang is-fast. 123_test, okay???"
+	arr, err := parser.Tokenise(text) 
 	if err != nil {
-		log.Fatal(err)
+		fmt.Print("error: ", err)
 	}
-	fmt.Printf("Page: %#v", page)
-	fmt.Println("Body Text: ", body)
+	fmt.Println(arr)
 }
+
+
