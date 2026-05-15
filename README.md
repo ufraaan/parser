@@ -3,6 +3,12 @@
 tiny go library that fetches a webpage and pulls out the title, meta
 description, links, and body text. also tokenises text into words.
 
+```mermaid
+graph LR
+  URL-->Parse-->Page
+  Parse-->Body-->Tokenise-->Tokens
+```
+
 - normalises urls
 - strips scripts and styles
 - filters out mailto/tel/etc links
