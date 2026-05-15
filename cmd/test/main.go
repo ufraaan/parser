@@ -8,9 +8,10 @@ import (
 )
 
 func main() {
-	title, err := parser.Parse("https://ufraan.dev")
+	page, body, err := parser.Parse("https://ufraan.dev")
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(title)
+	fmt.Printf("Page: %#v", page)
+	fmt.Println("Body Text: ", body)
 }

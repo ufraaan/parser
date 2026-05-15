@@ -2,6 +2,7 @@ package parser
 
 import (
 	"net/http"
+	"regexp"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -48,7 +49,9 @@ func Parse(url string) (Page, string, error) {
 	})
 
 	body := doc.Find("body").Text()
-	
+
+	re := regexp.MustCompile(`\s+`)
+	body = re.ReplaceAllString(body, " ")
 
 	return page, body, nil
 }
