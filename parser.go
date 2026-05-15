@@ -96,6 +96,10 @@ func Parse(rawUrl string) (Page, string, error) {
 		if exists {
 			linkURL, err := url.Parse(href)
 			if err == nil {
+				// to avoid mailto: , tel: , javascript: , etc.
+				if linkURL.Scheme != "" && linkURL.Scheme != "http" && linkURL.Scheme != "https" {
+					return
+				}
 				resolved := baseURL.ResolveReference(linkURL).String()
 				page.Links = append(page.Links, resolved)
 			}
