@@ -12,19 +12,23 @@ type Page struct {
 	Links       []string
 }
 
-func Parse(url string) (Page, error) {
+func Parse(url string) (Page, string, error) {
 	res, err := http.Get(url)
 	if err != nil {
-		return Page{}, err
+		return Page{}, "", err
 	}
 
 	defer res.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		return Page{}, err
+		return Page{}, "", err
 	}
 	page := Page{}
+
+	// non content nodes
+	doc.Find("script").Remove()
+	doc.Find("style").Remove()
 
 	// get the title
 	page.Title = doc.Find("title").Text()
@@ -43,5 +47,8 @@ func Parse(url string) (Page, error) {
 		}
 	})
 
-	return page, nil
+	body := doc.Find("body").Text()
+	
+
+	return page, body, nil
 }
