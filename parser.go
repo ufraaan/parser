@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"net"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -48,15 +47,20 @@ func normalise(raw string) (string, error) {
 	return u.String(), nil
 }
 
-func Parse(url string) (Page, string, error) {
+func Parse(rawUrl string) (Page, string, error) {
 
 	// normalise url
-	url, err := normalise(url)
+	normalisedUrl, err := normalise(rawUrl)
 	if err != nil {
 		return Page{}, "", err
 	}
 
-	res, err := http.Get(url)
+	baseURL, err := url.Parse(normalisedUrl)
+	if err != nil {
+		return Page{}, "", err
+	}
+
+	res, err := http.Get(normalisedUrl)
 	if err != nil {
 		return Page{}, "", err
 	}
@@ -90,7 +94,11 @@ func Parse(url string) (Page, string, error) {
 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
 		href, exists := s.Attr("href")
 		if exists {
-			page.Links = append(page.Links, href)
+			linkURL, err := url.Parse(href)
+			if err == nil {
+				resolved := baseURL.ResolveReference(linkURL).String()
+				page.Links = append(page.Links, resolved)
+			}
 		}
 	})
 
