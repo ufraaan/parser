@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -37,7 +38,7 @@ func normalise(raw string) (string, error) {
 	u.RawQuery = ""
 
 	// normalise host
-	u.Host = strings.ToLower(u.Host)
+	u.Host = strings.ToLower(u.Hostname()) // Hostname strips port
 
 	// normalise path
 	if u.Path == "" {
