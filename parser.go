@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"fmt"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -24,6 +25,10 @@ func Parse(url string) (Page, string, error) {
 	}
 
 	defer res.Body.Close()
+
+	if res.StatusCode < 200 || res.StatusCode >= 300 {
+		return Page{}, "", fmt.Errorf("bad status: %d, %s", res.StatusCode, res.Status)
+	}
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
