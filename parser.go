@@ -14,6 +14,9 @@ type Page struct {
 	Links       []string
 }
 
+// done only once when package loads
+var re = regexp.MustCompile(`\s+`)
+
 func Parse(url string) (Page, string, error) {
 	res, err := http.Get(url)
 	if err != nil {
@@ -60,7 +63,6 @@ func Parse(url string) (Page, string, error) {
 	body = strings.Join(bodyParts, " ")
 
 	// cleanup
-	re := regexp.MustCompile(`\s+`)
 	body = re.ReplaceAllString(body, " ")
 
 	return page, body, nil
